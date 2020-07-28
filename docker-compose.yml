@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: test_nfc_db
+    volumes:
+      - ./db/initdb/:/docker-entrypoint-initdb.d
+      - ./db/data/:/var/lib/mysql/
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PW}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - "9906:3306"
+  web:
+    build: .
+    image: php:7.2.2-apache
+    container_name: test_nfc_web
+    depends_on:
+      - db
+    volumes:
+      - ./nfc_data/:/var/www/html/
+    environment:
+      DEV: production
+      MYSQL_HOST: ${DB_HOST}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PW}
+      MYSQL_DATABASE: ${DB_NAME}
+    ports:
+      - "8100:80"
+    stdin_open: true
+    tty: true
