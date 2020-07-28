@@ -1,0 +1,539 @@
+<div id="loading" class="spinner_border text-primary" style="display:none"></div>
+<!-- Content Column -->
+<div class="d-sm-flex align-items-center justify-content-between mb-2">
+    <h1 class="h3 mb-0 text-gray-800">เจ้าหน้าที่</h1> <!-- d-none -->
+    			<div class="">
+					<form class="form-inline" id="frm_search_staff">
+				    <div class="input-group">
+				      <div class="input-group-prepend">
+				        <span class="input-group-text"><i class="fas fa-search"></i></span>
+				      </div>
+				      <input id="txt_search" type="text" class="form-control" placeholder="ค้นหาจากชื่อเจ้าหน้าที่..">
+				      <button type="button" onclick="func_search()" class="btn btn-light">ค้นหา</button>
+				    </div>
+				  </form>
+				</div>
+    
+</div>
+<div class="row">
+    <div class="col-lg-12 mb-4">
+        <!-- Project Card Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header d-sm-flex align-items-center justify-content-between mb-2">
+                <h6 class="m-0 font-weight-bold text-primary">ข้อมูลเจ้าหน้าที่</h6>
+                <a class=" d-sm-inline-block btn btn-sm btn btn-secondary shadow-sm" onclick="open_add()" data-toggle="modal" data-target="#modal_p_staff"><i class="fas fa-plus-square fa-md text-white"></i></a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>ลำดับ</th>
+								<th>ชื่อ-นามสกุล</th>
+								<th>ดู</th>
+                            </tr>
+                        </thead>
+                        <tbody id="p_staff_content">
+                          
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+	 <!-- The Modal -->
+	<div class="modal fade" id="modal_p_staff" >
+		<div class="modal-dialog modal-lg" >
+			<div class="modal-content">
+	        <!-- Modal Header -->
+				<div class="modal-header" id="head_stage">
+					<h4 class="modal-title">ข้อมูลเจ้าหน้าที่</h4>
+					<button type="button" onclick="clear_input()" class="close" data-dismiss="modal">&times;</button>
+				</div>
+	        <!-- Modal body -->
+	        <form id="frm_p_staff" enctype="multipart/form-data">
+				<div class="modal-body">
+					<!-- <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="p_height"></label>
+					    <div class="input-group">
+					        <div align="center">
+					        	<center><img id="sh_img" class="rounded" width="50%">
+					        </div>
+					    </div>
+				    </div> -->
+				    <div>ข้อมูลทั่วไป</div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="p_id">รหัสประชาชน</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-tags"></i></span>
+					        </div>
+					        <input type="hidden" name="frm_mode" id="frm_mode">
+					        <input type="text" class="form-control" id="p_id" name="p_id" oninvalid="this.setCustomValidity('รหัสประชาชน')"required oninput="this.setCustomValidity('')" placeholder="รหัสประชาชน">
+					    </div>
+				    </div>
+					<div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="p_name">ชื่อ-นามสกุล</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-tags"></i></span>
+					        </div>
+					        <input type="text" class="form-control" id="p_name" name="p_name" oninvalid="this.setCustomValidity('ชื่อ')"required oninput="this.setCustomValidity('')" placeholder="ชื่อ">
+					        <input type="text" class="form-control" id="p_lname" name="p_lname" oninvalid="this.setCustomValidity('นามสกุล')"required oninput="this.setCustomValidity('')" placeholder="นามสกุล">
+					    </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="p_age">อายุ</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-tag"></i></span>
+					        </div>
+					        <input type="number" class="form-control" id="p_age" name="p_age" oninvalid="this.setCustomValidity('อายุ')" required oninput="this.setCustomValidity('')" placeholder="อายุ">
+					    </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="p_age">หมู่เลือด</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-tint"></i></i></span>
+					        </div>
+					        <div style="margin-left:10px;">
+
+					        	<div class="custom-control custom-radio custom-control-inline">
+								  <input type="radio" id="p_blood_a" name="p_blood" class="custom-control-input" value="A" checked>
+								  <label class="custom-control-label" for="p_blood_a">A</label>
+								</div>
+								<div class="custom-control custom-radio custom-control-inline">
+								  <input type="radio" id="p_blood_b" name="p_blood" class="custom-control-input" value="B">
+								  <label class="custom-control-label" for="p_blood_b">B</label>
+								</div>
+								<div class="custom-control custom-radio custom-control-inline">
+								  <input type="radio" id="p_blood_o" name="p_blood" class="custom-control-input" value="O">
+								  <label class="custom-control-label" for="p_blood_o">O</label>
+								</div>
+								<div class="custom-control custom-radio custom-control-inline">
+								  <input type="radio" id="p_blood_ab" name="p_blood" class="custom-control-input" value="AB">
+								  <label class="custom-control-label" for="p_blood_ab">AB</label>
+								</div>
+							</div>
+					    </div>
+					
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="p_gender">เพศ</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-venus-mars"></i></i></span>
+					        </div>
+					        <div style="margin-left:10px;">
+					        	<div class="custom-control custom-radio custom-control-inline">
+								  <input type="radio" id="p_gender_m" name="p_gender" class="custom-control-input" value="M" checked>
+								  <label class="custom-control-label" for="p_gender_m">ชาย</label>
+								</div>
+								<div class="custom-control custom-radio custom-control-inline">
+								  <input type="radio" id="p_gender_w" name="p_gender" class="custom-control-input" value="W">
+								  <label class="custom-control-label" for="p_gender_w">หญิง</label>
+								</div>
+
+								
+							</div>
+					    </div>
+					
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="p_weight">น้ำหนัก</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-weight"></i></span>
+					        </div>
+					        <input type="text" class="form-control" id="p_weight" name="p_weight" oninvalid="this.setCustomValidity('น้ำหนัก')"required oninput="this.setCustomValidity('')" placeholder="น้ำหนัก">
+					    </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="p_height">ส่วนสูง</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-align-justify"></i></span>
+					        </div>
+					        <input type="text" class="form-control" id="p_height" name="p_height" oninvalid="this.setCustomValidity('ส่วนสูง')"required oninput="this.setCustomValidity('')" placeholder="ส่วนสูง">
+					    </div>
+				    </div>
+				    <hr>ข้อมูลความปลอดภัย
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="s_uname">ชื่อผู้ใช้</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-user"></i></span>
+					        </div>
+					        <input type="text" class="form-control" id="s_uname" name="s_uname" oninvalid="this.setCustomValidity('ชื่อผู้ใช้')"required oninput="this.setCustomValidity('')" placeholder="ชื่อผู้ใช้">
+					    </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="s_passwd">รหัสผ่าน</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-key"></i></span>
+					        </div>
+					        <input type="password" class="form-control" id="s_passwd" name="s_passwd" oninvalid="this.setCustomValidity('รหัสผ่าน')"required oninput="this.setCustomValidity('')" placeholder="รหัสผ่าน">
+					    </div>
+				    </div>
+				    <div class="col-md-12 mb-12">
+				      <label class="cv_keep-left" for="s_passwd_conf">ยืนยันรหัสผ่าน</label>
+					    <div class="input-group">
+					        <div class="input-group-prepend">
+					          <span class="input-group-text" ><i class="fas fa-key"></i></span>
+					        </div>
+					        <input type="password" class="form-control" id="s_passwd_conf" name="s_passwd_conf" oninvalid="this.setCustomValidity('ยืนยันรหัสผ่าน')"required oninput="this.setCustomValidity('')" placeholder="ยืนยันรหัสผ่าน">
+					    </div>
+				    </div>
+
+
+
+
+				    <div id="frm"></div>
+				    <div id="msg"></div>
+				</div>
+			
+	        <!-- Modal footer -->
+				<div class="modal-footer" id="modal_p_staff_foot">	
+					<div id="mng"></div>
+				</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<div style="margin-top:10px;">
+	<ul class="pagination justify-content-center" id="pagination">
+  	</ul>
+</div>
+
+
+<script type="text/javascript">
+	var data;
+	var tmp_page;
+	var tmp_filter;
+	// -------------------------- onload ---------------------------//
+	// let link="http://localhost/nfc_data/call_controller/api.php";
+	open_add();
+	load_p_staff('',1);
+	// $("#modal_p_staff").modal();
+	$("title").text(title());
+	$(document).on('keypress',function(e) {
+	    if(e.which == 13) {
+	        if($("#frm_mode").val()==2){
+	    		update();
+	    	}else{
+	    		add();
+	    	}
+	    }
+	});
+	$( "#frm_search_staff" ).submit(function( event ) {
+	  func_search();
+	  event.preventDefault();
+	});
+	// ------------------------- function -------------------------//
+	$("#frm_search").submit(()=>{
+		load_p_staff($("#txt_search").val(),tmp_page);
+	});
+	function func_search(){
+		load_p_staff($("#txt_search").val(),tmp_page);
+	}
+	function open_add(){
+		clear_input();
+		let txt=`<button id="btn_save" onclick="add()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
+		$("#mng").html(txt);
+	}
+	function sh_data(p_id,p_name,p_lname,p_age,p_blood,p_weight,p_height,p_gender,s_uname,s_passwd){
+		clear_input();
+		let txt=`<button id="btn_del" onclick="del()" type="button" class="btn btn-danger" data-dismiss=""><i class="fas fa-trash-alt fa-1x"></i> ลบ</button>
+		<button id="btn_save" onclick="update()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
+
+	
+		$("#p_id").val(p_id);
+		$("#p_name").val(p_name);
+		$("#p_lname").val(p_lname);
+		$("#p_weight").val(p_weight);
+		$("#p_height").val(p_height);
+		$("#p_age").val(p_age);
+		$("#s_uname").val(s_uname);
+
+		$("#modal_p_staff").modal();
+		
+		$("#p_blood").val(p_blood);
+
+		if(p_gender=="M"){$("#p_gender_m").prop('checked', true);}
+		else{$("#p_gender_w").prop('checked', true);}
+
+		if(p_blood=="A"){$("#p_blood_a").prop('checked', true);}
+		else if(p_blood=="B"){$("#p_blood_b").prop('checked', true);}
+		else if(p_blood=="O"){$("#p_blood_o").prop('checked', true);}
+		else if(p_blood=="AB"){$("#p_blood_ab").prop('checked', true);}
+
+		$("#frm_mode").val(2);
+		// $("#frm").html(sta);
+		$("#mng").html(txt);
+	}
+	function clear_input(){
+		$("#p_id").val('');
+		$("#p_name").val('');
+		$("#p_lname").val('');
+		$("#p_age").val('');
+		$("#p_blood").val('');
+		$("#p_weight").val('');
+		$("#p_height").val('');
+		$("#p_gender").val('');
+		$("#s_uname").val('');
+		$("#p_gender_m").prop('checked', true);
+		$("#p_gender_w").prop('checked', false);
+		$("#p_blood_a").prop('checked', true);
+		$("#p_blood_b").prop('checked', false);
+		$("#p_blood_o").prop('checked', false);
+		$("#p_blood_ab").prop('checked', false);
+		$("#s_passwd").val('');
+		$("#s_passwd_conf").val('');
+		$("#frm_mode").val(1);
+		$("#frm_p_staff").removeClass("was-validated");
+	}
+	function add(){
+		$("#msg").html("");
+		let sta=0;
+		if($("#p_id").val()==""){sta++;}
+		if($("#p_name").val()==""){sta++;}
+		if($("#p_lname").val()==""){sta++;}
+		if($("#p_age").val()==""){sta++;}
+		if($("#s_uname").val()==""){sta++;}
+		if($("#s_passwd").val()==""){sta++;}
+		if($("#s_passwd_conf").val()==""){sta++;}
+		if($("#s_passwd").val()!=$("#s_passwd_conf").val()){
+			sta++;
+			let msg=`<div style='color:#bd4646'>ยืนยันรหัสผ่านไม่ถูกต้อง</div>`;
+			$("#msg").html(msg);
+		}
+		if($("#p_gender_m").is(":checked")==false && $("#p_gender_w").is(":checked")==false){sta++;}
+		if($("#p_blood_a").is(":checked")==false && $("#p_blood_b").is(":checked")==false && $("#p_blood_o").is(":checked")==false && $("#p_blood_ab").is(":checked")==false){sta++;}
+		if(sta!=0){$("#frm_p_staff").addClass("was-validated");return false;}
+		else{
+			let f_data=new FormData();
+			let data = $("#frm_p_staff").serializeArray();
+			$.each(data,(key,val)=>{
+				if(val.name=="s_passwd"){
+		          let val_pass=md5(val.value);
+		          let sub=4;
+		          let str_pass='';
+		          let txt=[];
+		          let count=0;
+		          let encode="";
+		          let submd5=((val_pass.length)/sub);
+
+		          for(let i=0;i<(val_pass.length);i++){
+		            if(i%submd5==0 && i!=0){count++;str_pass='';}
+		            else{str_pass+=val_pass[i];}
+		            txt[count]=str_pass;
+
+		          }
+		          $.each(txt,(key,val)=>{
+		            encode+=val.substring(0,8);
+		          });
+		          // console.log(encode);
+		          val.value=encode;
+		        }
+		        if(val.name!="s_passwd_conf"){
+		        	f_data.append(val.name,val.value);
+		        }
+				
+			});
+			f_data.append("p_staff_add",true);
+			event.preventDefault();
+			$.ajax({
+				type: "POST",
+	 			url: link,
+	 			data: f_data,
+				contentType: false,
+				processData: false,
+			}).done((res)=> {
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_p_staff").modal('toggle');
+					load_p_staff(tmp_filter,tmp_page);
+					clear_input();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}	 				
+	 		});
+		}
+	}	
+	function update(){
+		$("#msg").html("");
+		let sta=0;
+		if($("#p_id").val()==""){sta++;}
+		if($("#p_name").val()==""){sta++;}
+		if($("#p_lname").val()==""){sta++;}
+		if($("#p_age").val()==""){sta++;}
+		if($("#s_uname").val()==""){sta++;}
+		
+		if($("#s_passwd").val()!="" && $("#s_passwd").val()!=$("#s_passwd_conf").val()){
+			sta++;
+			let msg=`<div style='color:#bd4646'>ยืนยันรหัสผ่านไม่ถูกต้อง</div>`;
+			$("#msg").html(msg);
+		}
+		if($("#p_gender_m").is(":checked")==false && $("#p_gender_w").is(":checked")==false){sta++;}
+		if($("#p_blood_a").is(":checked")==false && $("#p_blood_b").is(":checked")==false && $("#p_blood_o").is(":checked")==false && $("#p_blood_ab").is(":checked")==false){sta++;}
+		if(sta!=0){$("#frm_p_staff").addClass("was-validated");return false;}
+		else{
+			let f_data=new FormData();
+			let data = $("#frm_p_staff").serializeArray();
+			$.each(data,(key,val)=>{
+				
+		        if(val.name!="s_passwd" && val.name!="s_passwd_conf"){
+		        	f_data.append(val.name,val.value);
+		        }
+			});
+			if($("#s_passwd").val()!="" && $("#s_passwd").val()==$("#s_passwd_conf").val()){
+
+		          let val_pass=md5($("#s_passwd").val());
+		          let sub=4;
+		          let str_pass='';
+		          let txt=[];
+		          let count=0;
+		          let encode="";
+		          let submd5=((val_pass.length)/sub);
+
+		          for(let i=0;i<(val_pass.length);i++){
+		            if(i%submd5==0 && i!=0){count++;str_pass='';}
+		            else{str_pass+=val_pass[i];}
+		            txt[count]=str_pass;
+
+		          }
+		          $.each(txt,(key,val)=>{
+		            encode+=val.substring(0,8);
+		          });
+		          // console.log(encode);
+	        
+				f_data.append("s_passwd",encode);
+			}
+			f_data.append("p_staff_update",true);
+			event.preventDefault();
+
+				$.ajax({
+					type: "POST",
+		 			url: link,
+		 			data: f_data,
+					contentType: false,
+					processData: false,
+				}).done((res)=> {
+					let data=JSON.parse(res);
+					if(data.status){
+						$("#modal_p_staff").modal('toggle');
+						load_p_staff(tmp_filter,tmp_page);
+						clear_input();
+					}else{
+						$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+					}
+				});	
+			}
+	}	
+	function del(){
+			$("#msg").html("");
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"p_id":$("#p_id").val(),
+					"p_staff_del":true
+				}
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_p_staff").modal('toggle');
+					load_p_staff(tmp_filter,tmp_page);
+					clear_input();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}
+
+			});
+	}
+	function load_p_staff(filter,page){
+			let txt;
+			tmp_filter=filter;
+			$("#loading").show();
+			$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"load_p_staff":true,
+					"filter":filter,
+					"page":page
+				}
+			}).done((res)=>{
+				var data=JSON.parse(res);
+				if(!data.msg){
+					$.each(data,(i, item)=>{
+						let css=`style="background-color:#98afc9;color:#fff"`;
+						let row=(page==1?parseInt(i)+1:(parseInt(i)+1)+(page-1)*10);
+						txt+=`<tr ${css}>
+					        <td>${row}</td>
+					        <td>${item.p_name} ${item.p_lname}</td>
+					        <td>${item.p_blood}</td>
+					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.p_id}','${item.p_name}','${item.p_lname}','${item.p_age}','${item.p_blood}','${item.p_weight}','${item.p_height}','${item.p_gender}','${item.s_uname}','${item.s_passwd}')" class="btn">
+				        		<i  class="fas fa-book-open fa-2x"></i>
+				        	</button>`;
+						
+					});
+				}else{
+					txt=`<tr><td colspan='3'>no data</td></tr>`;
+				}
+				$("#loading").hide();
+				$("#p_staff_content").html(txt);
+				set_pagination(filter,page);
+			});
+	}
+	function set_pagination(filter,page){
+		let start_page;
+		let end_page;
+		// console.log(filter);
+		// console.log(page);
+		$("#pagination").empty();
+		
+
+		$.ajax({
+				type:"POST",
+				url:link,
+				data:{
+					"set_pagination_staff":true,
+					"filter":filter
+				}
+			}).done((res)=>{
+				var data=JSON.parse(res);
+				tmp_page=(page==="pagi_first"?1:(page=="pagi_last"?data:page));
+				if(tmp_page>5){
+					start_page=tmp_page-4;
+					end_page=tmp_page+5;
+				}else{
+					start_page=1;
+					end_page=10;
+				}
+				
+				$("#pagination").append(`<li class="page-item " id="pagi_first"><a class="page-link" onclick="load_p_staff('${tmp_filter}',1)">first</a></li>`);
+				
+				for(let i=start_page;i<=data;i++){
+					if(i<=end_page){
+						$("#pagination").append(`<li class="page-item" id="pagi_${i}"><a class="page-link" onclick="load_p_staff('${tmp_filter}',${i})">${i}</a></li>`);
+						if(i==page){
+							let active_page=`#pagi_${page}`;
+							$(active_page).addClass("active");
+						}
+					}
+				}
+				
+				$("#pagination").append(`<li class="page-item " id="pagi_last"><a class="page-link" onclick="load_p_staff('${tmp_filter}',${data})">last</a></li>`);
+				
+			});	
+	}
+
+</script>
+
