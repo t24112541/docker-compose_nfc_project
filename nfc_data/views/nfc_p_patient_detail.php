@@ -317,23 +317,6 @@
 	</div>
 
 
-	<div class="modal fade" id="modal_print_content" >
-		<div class="modal-dialog modal-lg" >
-			<div class="modal-content">
-	        <!-- Modal Header -->
-				<div class="modal-header" id="head_stage">
-					<h4 class="modal-title">ข้อมูลยาผู้ป่วย</h4>
-					<button type="button" onclick="clear_input()" class="close" data-dismiss="modal">&times;</button>
-				</div>
-	        <!-- Modal body -->
-	        	<div id="print_content" class="col-md-4"></div>
-
-	        	<div class="modal-footer" id="modal_p_terms_of_use_foot_2">	
-					<button id="btn_save" onclick="cv_print('print_content')" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> พิมพ์</button>
-				</div>
-	    	</div>
-	    </div>
-	</div>
 <div style="margin-top:10px;">
 	<ul class="pagination justify-content-center" id="pagination">
   	</ul>
@@ -348,6 +331,7 @@
 	var drug_id;
 	var patient_id;
 	var link_patient_detail="./call_controller/p_terms_of_use.php";
+	var global_link="./call_controller/";
 	// -------------------------- onload ---------------------------//
 	// let link="http://localhost/nfc_data/call_controller/api.php";
 	open_add();
@@ -355,7 +339,7 @@
 	// $("#modal_p_terms_of_use").modal();
 	$("title").text(title());
 	load_p_patient_and_drug();
-
+	load_dose_unit();
 	// ------------------------- function -------------------------//
 	// ----------------- frm_mode ------------------
 	// 1 add();
@@ -417,6 +401,7 @@
 		$("#modal_p_terms_of_use").modal('toggle');
 		$("#modal_p_terms_of_use_2").modal('toggle');
 		drug_id=d_id;
+		load_dose_unit();
 		patient_id=<?=$_GET['sh_patient_detail']?>;
 	}	
 	function add(){
@@ -539,7 +524,9 @@
 							limit_word+=item.d_name[i];
 							if(i==19){limit_word+="...";}
 						}
-						txt+=`<tr style="cursor: pointer;" onclick="sh_data('${item.t_id}','2')">
+						let css=(item.t_print_stage==0?`style="background-color:#a75454;color:#fff;cursor: pointer;"`:`style="background-color:#7ec282;;color:#fff;cursor: pointer;"`);
+						
+						txt+=`<tr ${css} onclick="sh_data('${item.t_id}','2')">
 							<td>${row}</td>
 					        <td>${limit_word} </td>`;
 					});
@@ -550,15 +537,38 @@
 				$("#loading").hide();
 			});
 	}
-	function cv_print_page(d_name,d_info,txt_food,text_drug,drug_expire,t_dose,t_dose_unit){
+	function cv_print_page(p_name,d_des,d_name,d_info,txt_food,text_drug,drug_expire,t_dose,t_dose_unit,t_id,p_id){
 		$("#modal_p_terms_of_use_2").modal('toggle');
+		let export_date=chk_date(`<?php echo date("Y-m-d");?>`);
+		let nfc_data="";
+		if(d_des!=""){nfc_data+=`<input type="hidden" name="d_des" id="d_des" value="${d_des}">`;}
+		if(d_info!=""){nfc_data+=`<input type="hidden" name="d_info" id="d_info" value="${d_info}">`;}
+		if(txt_food!="" && txt_food!="ไม่ระบุ"){nfc_data+=`<input type="hidden" name="txt_food" id="txt_food" value="ช่วงใช้ยา ${txt_food}">`;}
+		if(text_drug!=""){nfc_data+=`<input type="hidden" name="text_drug" id="text_drug" value="เวลาการใช้ยา ${text_drug}">`;}
+		if(t_dose!=""){nfc_data+=`<input type="hidden" name="t_dose" id="t_dose" value="ใช้ยา ครั้งละ ${t_dose} ${t_dose_unit}">`;}
+		if(drug_expire!=""){nfc_data+=`<input type="hidden" name="drug_expire" id="drug_expire" value="วันหมดอายุ ${drug_expire}">`;}
 		var print_page=`
-			<div style="width:45%;font-size:14px" id="print_label">
+			<div style="width:50%;font-size:12px;font-weight: static;" id="print_label">
+			<form id="print_stage" enctype="multipart/form-data">
+				<input type="hidden" name="t_id" value="${t_id}">
+			</form>
+			<form id="print_nfc" enctype="multipart/form-data" >
+				<input type="hidden" name="p_name" id="p_name" value="${p_name}">
+				${nfc_data}				
+			</form>
 						<div class="col-md-12 mb-12" style="margin-top:0px" style="margin-top:-5px" id="drug_data">
 							<div class="form-group row">
-							    <label for="" class="col-sm-4 col-form-label">ยา</label>
+							<label for="" class="col-sm-4 col-form-label">ชื่อ</label>
 							    <div class="col-sm-8" style="margin-top:6px">
-							    	${d_name}
+							    	${p_name} ${p_id}
+							    </div>
+							</div>
+						</div>
+						<div class="col-md-12 mb-12" style="margin-top:-20px" id="drug_data">
+							<div class="form-group row">
+							    <label for="" class="col-sm-4 col-form-label">คำอธิบายการใช้ยา</label>
+							    <div class="col-sm-8" style="margin-top:6px">
+							      	${d_des}
 							    </div>
 							</div>
 						</div>
@@ -596,6 +606,24 @@
 								</div>
 		                   
 	                    </div>
+	                    <div class="col-md-12 mb-12" style="margin-top:0px" style="margin-top:-5px" id="drug_data">
+							<div class="form-group row">
+							    <label for="" class="col-sm-4 col-form-label">ยา</label>
+							    <div class="col-sm-8" style="margin-top:6px">
+							    	${d_name}
+							    </div>
+							</div>
+						</div>
+						<div class="col-md-12 mb-12" style="margin-top:-20px">
+	                    	
+							    <div class="form-group row">
+								    <label for="" class="col-sm-4 col-form-label">วันจ่ายยา</label>
+								    <div class="col-sm-8" style="margin-top:6px">
+								    	 ${export_date}  
+								    </div>
+								</div>
+		                    
+	                    </div>
 	                    <div class="col-md-12 mb-12" style="margin-top:-20px">
 	                    	
 							    <div class="form-group row">
@@ -607,15 +635,19 @@
 		                    
 	                    </div>
 	        </div>
+	        
+	        
+
 		`;
-		$("#print_content").html(print_page);
-		// $("#modal_print_content").modal('toggle');
-		cv_print('print_label');
-		// $("#modal_print_content").modal('toggle');
-		// $("#modal_p_terms_of_use_2").modal('toggle');
+		// set_print_txt(print_page);
+		sessionStorage.setItem("print_page", print_page);
+		// console.log(get_print_txt());
+		var print_view = window.open("./views/t_print.php");
+
 	}
 	function sh_data(t_id,mode){
 		clear_input();
+		load_dose_unit();
 		let text_drug="";
 		let txt_food;
 		let filter=t_id;
@@ -647,9 +679,11 @@
 						}else{
 							txt_food="ไม่ระบุ";
 						}
-
+						let d_des=(item.d_description!=null?item.d_description:"");
+						let d_in=(item.d_info!=null?item.d_info:"");
 						drug_name=`	<h3>${item.d_name}</h3><p>
-									<span>${item.d_info}</span><br>
+									<span>${d_des}</span><br>
+									<span>${d_in}</span><br>
 									<hr>
 						`;
 
@@ -680,12 +714,15 @@
 
 						$("#t_dose").val(item.t_dose);
 						let str_select="#t_dose_unit option[value="+item.t_dose_unit+"]";
+
+						// console.log(str_select);
+
 						$(str_select).attr('selected','selected');
 						$("#t_id").val(item.t_id);
 						if(mode==2){
 							button=`
 							<button id="btn_del" onclick="del()" type="button" class="btn btn-danger" data-dismiss=""><i class="fas fa-trash-alt fa-1x"></i> ลบ</button>
-							<button id="btn_print" onclick="cv_print_page('${item.d_name}','${item.d_info}','${txt_food}','${text_drug}','${chk_date(item.d_expire)}','${item.t_dose}','${item.t_dose_unit}')" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-print fa-1x"></i> พิมพ์</button>`;
+							<button id="btn_print" onclick="cv_print_page('${item.p_name} ${item.p_lname}','${d_des}','${item.d_name}','${d_in}','${txt_food}','${text_drug}','${chk_date(item.d_expire)}','${item.t_dose}','${item.du_name}','${item.t_id}','${item.p_id}')" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-print fa-1x"></i> พิมพ์</button>`;
 						}else{
 							button=`<button id="btn_save" onclick="add()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
 						}
@@ -773,7 +810,31 @@
 				// set_pagination(filter,page);
 			});
 	}
-	
+	function load_dose_unit(){
+		let txt="";
+			$("#loading").show();
+			$.ajax({
+				type:"POST",
+				url:global_link+"dose_unit.php",
+				data:{
+					"load_dose_unit":true,
+				}
+			}).done((res)=>{
+				var data=JSON.parse(res);
+				if(!data.msg){
+					// console.log(data);
+					$.each(data,(i, item)=>{
+						txt+=`<option value="${item.t_dose_unit}">${item.du_name }</option>`
+					});
+				}else{
+					txt=`<tr><td colspan='3'>no data</td></tr>`;
+				}
+
+				$("#loading").hide();
+				$("#t_dose_unit ").html(txt);
+				// set_pagination(filter,page);
+			});
+	}
 
 </script>
 

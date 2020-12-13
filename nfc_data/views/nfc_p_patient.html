@@ -65,13 +65,14 @@
 					    </div>
 				    </div> -->
 				    <div class="col-md-12 mb-12">
-				      <label class="cv_keep-left" for="p_id">รหัสประชาชน</label>
+				      <label class="cv_keep-left" for="p_card_id">รหัสประชาชน</label>
 					    <div class="input-group">
 					        <div class="input-group-prepend">
 					          <span class="input-group-text" ><i class="fas fa-tags"></i></span>
 					        </div>
-					        <input type="hidden" name="frm_mode" id="frm_mode">
-					        <input type="text" class="form-control" id="p_id" name="p_id" oninvalid="this.setCustomValidity('รหัสประชาชน')"required oninput="this.setCustomValidity('')" placeholder="รหัสประชาชน">
+							<input type="hidden" name="frm_mode" id="frm_mode">
+							<input type="hidden" name="p_id" id="p_id">
+					        <input type="text" class="form-control" id="p_card_id" name="p_card_id" oninvalid="this.setCustomValidity('รหัสประชาชน')"required oninput="this.setCustomValidity('')" placeholder="รหัสประชาชน">
 					    </div>
 				    </div>
 					<div class="col-md-12 mb-12">
@@ -218,7 +219,7 @@
 		let txt=`<button id="btn_save" onclick="add()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
 		$("#mng").html(txt);
 	}
-	function sh_data(p_id,p_name,p_lname,p_age,p_blood,p_weight,p_height,p_gender){
+	function sh_data(p_card_id,p_name,p_lname,p_age,p_blood,p_weight,p_height,p_gender,p_id){
 		clear_input();
 		let txt=`
 		
@@ -227,15 +228,15 @@
 		<button id="btn_save" onclick="update()" type="button" class="btn btn-success float-right" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
 
 	
-		$("#p_id").val(p_id);
-		$("#p_id").prop('readonly', true);
+		$("#p_card_id").val(p_card_id);
+		$("#p_card_id").prop('readonly', true);
 		$("#p_name").val(p_name);
 		$("#p_lname").val(p_lname);
 		$("#p_weight").val(p_weight);
 		$("#p_height").val(p_height);
 		$("#p_age").val(p_age);
 		$("#modal_p_patient").modal();
-		
+		$("#p_id").val(p_id);
 		$("#p_blood").val(p_blood);
 
 		if(p_gender=="M"){$("#p_gender_m").prop('checked', true);}
@@ -251,7 +252,7 @@
 		$("#mng").html(txt);
 	}
 	function clear_input(){
-		$("#p_id").val('');
+		$("#p_card_id").val('');
 		$("#p_name").val('');
 		$("#p_lname").val('');
 		$("#p_age").val('');
@@ -265,14 +266,14 @@
 		$("#p_blood_b").prop('checked', false);
 		$("#p_blood_o").prop('checked', false);
 		$("#p_blood_ab").prop('checked', false);
-		$("#p_id").prop('readonly', false);
+		$("#p_card_id").prop('readonly', false);
 		$("#frm_mode").val(1);
 		$("#frm_p_patient").removeClass("was-validated");
 	}
 	function add(){
 		$("#msg").html("");
 		let sta=0;
-		if($("#p_id").val()==""){sta++;}
+		if($("#p_card_id").val()==""){sta++;}
 		if($("#p_name").val()==""){sta++;}
 		if($("#p_lname").val()==""){sta++;}
 		if($("#p_age").val()==""){sta++;}
@@ -339,7 +340,7 @@
 				type:"POST",
 				url:link,
 				data:{
-					"p_id":$("#p_id").val(),
+					"p_card_id":$("#p_card_id").val(),
 					"p_patient_del":true
 				}
 			}).done((res)=>{
@@ -376,7 +377,7 @@
 					        <td>${row}</td>
 					        <td>${item.p_name} ${item.p_lname}</td>
 					        <td>${item.p_blood}</td>
-					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.p_id}','${item.p_name}','${item.p_lname}','${item.p_age}','${item.p_blood}','${item.p_weight}','${item.p_height}','${item.p_gender}')" class="btn">
+					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.p_card_id}','${item.p_name}','${item.p_lname}','${item.p_age}','${item.p_blood}','${item.p_weight}','${item.p_height}','${item.p_gender}','${item.p_id}')" class="btn">
 				        		<i  class="fas fa-book-open fa-2x"></i>
 				        	</button>`;
 						

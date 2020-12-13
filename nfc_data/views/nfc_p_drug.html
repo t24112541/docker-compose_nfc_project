@@ -69,7 +69,7 @@
                         </div>
                     </div> -->
                     <div class="col-md-12 mb-12">
-                    <label class="cv_keep-left" for="d_id">รหัสยา</label>
+                    <label class="cv_keep-left" for="d_id">รหัสยา <span style="color:red">*</span></label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                             <span class="input-group-text" ><i class="fas fa-tags"></i></span>
@@ -79,7 +79,7 @@
                         </div>
                     </div>
                     <div class="col-md-12 mb-12">
-                    <label class="cv_keep-left" for="d_name">ชื่อยา</label>
+                    <label class="cv_keep-left" for="d_name">ชื่อยา <span style="color:red">*</span></label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                             <span class="input-group-text" ><i class="fas fa-tags"></i></span>
@@ -88,7 +88,7 @@
                         </div>
                     </div>
                     <div class="col-md-12 mb-12">
-                    <label class="cv_keep-left" for="d_expire">วันหมดอายุ</label>
+                    <label class="cv_keep-left" for="d_expire">วันหมดอายุ <span style="color:red">*</span></label>
                         <div class="input-group">
                             <div class="input-group-prepend">
                             <span class="input-group-text" ><i class="far fa-calendar-times"></i></span>
@@ -105,7 +105,15 @@
                             <textarea class="form-control" id="d_info" name="d_info"></textarea>
                         </div>
                     </div>
-                    
+                    <div class="col-md-12 mb-12">
+                    <label class="cv_keep-left" for="d_description">คำอธิบายการใช้ยา</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                            <span class="input-group-text" ><i class="fas fa-tag"></i></span>
+                            </div>
+                            <textarea class="form-control" id="d_description" name="d_description"></textarea>
+                        </div>
+                    </div>
                     <div class="col-md-12 mb-12">
                     <label class="cv_keep-left" for="d_use">วิธีใช้</label>
                         <div class="input-group">
@@ -173,7 +181,7 @@
 		let txt=`<button id="btn_save" onclick="add()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
 		$("#mng").html(txt);
 	}
-	function sh_data(d_id,d_name,d_expire,d_info){
+	function sh_data(d_id,d_name,d_expire,d_info,d_description){
 		load_p_use();
 		clear_input();
 		let txt=`<button id="btn_del" onclick="del()" type="button" class="btn btn-danger" data-dismiss=""><i class="fas fa-trash-alt fa-1x"></i> ลบ</button>
@@ -183,6 +191,7 @@
 		$("#d_name").val(d_name);
 		$("#d_expire").val(d_expire);
 		$("#d_info").val(d_info);
+		$("#d_description").val(d_description);
 		$("#modal_p_drug").modal();
 		$("#frm_mode").val(2);
 		let msg;
@@ -211,6 +220,7 @@
 		$("#d_name").val('');
 		$("#d_expire").val('');
 		$("#d_info").val('');
+		$("#d_description").val('');
 		$("#p_use_box").html('');
 		$("#frm_p_drug").removeClass("was-validated");
 	}
@@ -324,7 +334,7 @@
 						txt+=`<tr ${css}>
 					        <td>${row}</td>
 					        <td>${limit_word} </td>
-					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.d_id}','${item.d_name}','${item.d_expire}','${item.d_info}')" class="btn">
+					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.d_id}','${item.d_name}','${item.d_expire}','${item.d_info}','${item.d_description}')" class="btn">
 				        		<i  class="fas fa-book-open fa-2x"></i>
 				        	</button>`;
 					});

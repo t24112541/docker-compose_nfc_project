@@ -19,7 +19,7 @@ ob_start();
 		} 
 		$start=($page-1)*$perpage;
 		if(isset($_POST['filter']) && $_POST['filter']!=""){
-			$option="where p_id like '%{$_POST['filter']}%' || p_name like '%{$_POST['filter']}%' || p_lname like '%{$_POST['filter']}%' ";
+			$option="where p_card_id like '%{$_POST['filter']}%' || p_id like '%{$_POST['filter']}%' || p_name like '%{$_POST['filter']}%' || p_lname like '%{$_POST['filter']}%'  ";
 		}else{
 			$option="where 1 limit {$start},{$perpage}";
 		}
@@ -40,9 +40,16 @@ ob_start();
 
 		echo $db->select("p_patient","*",$option);
 	}else if(isset($_POST['p_patient_add'])){
-		$chk=$db->count_rows("p_patient","p_id","where p_id='{$_POST['p_id']}'");
+		$chk=$db->count_rows("p_patient","p_card_id","where p_card_id='{$_POST['p_card_id']}'");
+
 		if(!$chk){
-			echo $db->insert("p_patient","p_id,p_name,p_lname,p_age,p_blood,p_weight,p_height,p_gender","'{$_POST['p_id']}','{$_POST['p_name']}','{$_POST['p_lname']}','{$_POST['p_age']}','{$_POST['p_blood']}','{$_POST['p_weight']}','{$_POST['p_height']}','{$_POST['p_gender']}'");
+			$p_id=date("ymdhis");
+			while($db->count_rows("p_patient","p_id","where p_id='{$p_id}'")!=0){
+				echo $p_id;
+				$p_id=date("ymdhis");
+			}
+
+			echo $db->insert("p_patient","p_id,p_card_id,p_name,p_lname,p_age,p_blood,p_weight,p_height,p_gender","'{$p_id}','{$_POST['p_card_id']}','{$_POST['p_name']}','{$_POST['p_lname']}','{$_POST['p_age']}','{$_POST['p_blood']}','{$_POST['p_weight']}','{$_POST['p_height']}','{$_POST['p_gender']}'");
 		}else{
 			$res=[
 				"msg"=>"พบรหัสประชาชนเดียวกันในระบบ"
@@ -189,7 +196,7 @@ ob_start();
  
 		echo $db->select("p_use","*","where 1 ");
 	}else if(isset($_POST['p_drug_add'])){
-		echo $db->insert("p_drug","d_id,d_name,d_expire,d_info","'{$_POST['d_id']}','{$_POST['d_name']}','{$_POST['d_expire']}','{$_POST['d_info']}'");
+		echo $db->insert("p_drug","d_id,d_name,d_expire,d_info,d_description","'{$_POST['d_id']}','{$_POST['d_name']}','{$_POST['d_expire']}','{$_POST['d_info']}','{$_POST['d_description']}'");
 
 		if(isset($_POST['p_use'])){
 			foreach ($_POST['p_use'] as $key => $value) {
@@ -200,7 +207,7 @@ ob_start();
 		echo $db->delete("p_drug","d_id='{$_POST['d_id']}'");
 		$db->delete("p_math_use_drug","d_id='{$_POST['d_id']}'");
 	}else if(isset($_POST['p_drug_update'])){
-		echo $db->update("p_drug","d_name='{$_POST['d_name']}',d_expire='{$_POST['d_expire']}',d_info='{$_POST['d_info']}'","d_id='{$_POST['d_id']}'");
+		echo $db->update("p_drug","d_name='{$_POST['d_name']}',d_expire='{$_POST['d_expire']}',d_info='{$_POST['d_info']}',d_description='{$_POST['d_description']}'","d_id='{$_POST['d_id']}'");
 		$db->delete("p_math_use_drug","d_id='{$_POST['d_id']}'");
 		if(isset($_POST['p_use'])){
 			foreach ($_POST['p_use'] as $key => $value) {

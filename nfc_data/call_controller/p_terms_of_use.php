@@ -33,12 +33,12 @@ ob_start();
 		} 
 		$start=($page-1)*$perpage;
 		if(isset($_POST['filter']) && $_POST['filter']!=""){
-			$option="where p_terms_of_use.p_id = p_patient.p_id && p_terms_of_use.t_id = '{$_POST['filter']}' && p_drug.d_id = p_terms_of_use.d_id";
+			$option="where p_terms_of_use.p_id = p_patient.p_id && p_terms_of_use.t_id = '{$_POST['filter']}' && p_drug.d_id = p_terms_of_use.d_id && p_terms_of_use.t_dose_unit=dose_unit.t_dose_unit";
 		}else{
-			$option="where p_terms_of_use.p_id = p_patient.p_id && p_patient.p_id = '{$_POST['filter']}' && p_drug.d_id = p_terms_of_use.d_id limit {$start},{$perpage}";
+			$option="where p_terms_of_use.p_id = p_patient.p_id && p_patient.p_id = '{$_POST['filter']}' && p_drug.d_id = p_terms_of_use.d_id && p_terms_of_use.t_dose_unit=dose_unit.t_dose_unit limit {$start},{$perpage}";
 		}
 
-		echo $db->select("p_patient,p_terms_of_use,p_drug","*",$option);
+		echo $db->select("p_patient,p_terms_of_use,p_drug,dose_unit","*",$option);
 	}else if(isset($_POST['p_terms_of_use'])){
 			// echo "ok";
 			$fields="";
@@ -66,6 +66,8 @@ ob_start();
 	}else if(isset($_POST['del_p_terms_of_use'])){
 		echo $db->delete("p_terms_of_use","t_id='{$_POST['t_id']}'");
 		
+	}else if(isset($_POST['print_stage'])){
+		echo $db->update("p_terms_of_use","t_print_stage='1'","t_id='{$_POST['t_id']}'");
 	}
 
 	

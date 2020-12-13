@@ -1,0 +1,301 @@
+<div id="loading" class="spinner_border text-primary" style="display:none"></div>
+<!-- Content Column -->
+<div class="d-sm-flex align-items-center justify-content-between mb-2">
+    <h1 class="h3 mb-0 text-gray-800">หน่วยนับ</h1> <!-- d-none -->
+    			<div class="">
+					<form class="form-inline" id="frm_search_dose_unit">
+				    <div class="input-group">
+				      <div class="input-group-prepend">
+				        <span class="input-group-text"><i class="fas fa-search"></i></span>
+				      </div>
+				      <input id="txt_search" type="text" class="form-control" placeholder="ค้นหา..">
+				      <button type="button" onclick="func_search()" class="btn btn-light">ค้นหา</button>
+				    </div>
+				  </form>
+				</div>
+    <a class=" d-sm-inline-block btn btn-sm btn btn-secondary shadow-sm" href="?import_drug_tmt"><i class="fas fa-upload fa-1x"></i></a>
+    
+</div>
+<div class="row">
+    <div class="col-lg-12 mb-4">
+        <!-- Project Card Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header d-sm-flex align-items-center justify-content-between mb-2">
+                <h6 class="m-0 font-weight-bold text-primary">หน่วยนับ</h6>
+                <a class=" d-sm-inline-block btn btn-sm btn btn-secondary shadow-sm" onclick="open_add()" data-toggle="modal" data-target="#modal_dose_unit"><i class="fas fa-plus-square fa-md text-white"></i></a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>ลำดับ</th>
+                                <th>หน่วยนับ</th>
+                                <th>ดู</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dose_unit_content">
+                          
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+<div style="margin-top:10px;">
+	<ul class="pagination justify-content-center" id="pagination">
+	    
+  	</ul>
+</div>
+<div class="modal fade" id="modal_dose_unit" >
+    <div class="modal-dialog modal-lg" >
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header" id="head_stage">
+                <h4 class="modal-title">หน่วยนับ</h4>
+                <button type="button" onclick="clear_input()" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <!-- Modal body -->
+            <form id="frm_dose_unit" enctype="multipart/form-data">
+                <div class="modal-body">
+
+                    <div class="col-md-12 mb-12">
+                    <label class="cv_keep-left" for="du_name">ชื่อเรียกหน่วยนัย <span style="color:red">*</span></label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                            <span class="input-group-text" ><i class="fas fa-tags"></i></span>
+                            </div>
+                            <div id="hidden"></div>
+                            <input type="text" class="form-control" id="du_name" name="du_name" oninvalid="this.setCustomValidity('ชื่อเรียกหน่วยนัย')"required oninput="this.setCustomValidity('')" placeholder="ชื่อเรียกหน่วยนัย">
+                        </div>
+                    </div>
+                    
+                    <div id="frm"></div>
+                    <div id="msg"></div>
+                </div>
+            
+                <!-- Modal footer -->
+                <div class="modal-footer col-sm-12" id="modal_dose_unit_foot">	
+                    <div id="mng"></div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+	var data;
+	var tmp_page;
+	var tmp_filter;
+	var link_dose_unit="./call_controller/dose_unit.php";
+	// -------------------------- onload ---------------------------//
+	// let link="http://localhost/nfc_data/call_controller/api.php";
+	open_add();
+	load_dose_unit('',1);
+
+	$("title").text(title());
+
+	// ------------------------- function -------------------------//
+	$(document).on('keypress',function(e) {
+	    if(e.which == 13) {
+	        if($("#frm_mode").val()==2){
+	    		update();
+	    	}else{
+	    		add();
+	    	}
+	    }
+	});
+	function func_search(){
+		load_dose_unit($("#txt_search").val(),tmp_page);
+	}
+	$( "#frm_search_dose_unit" ).submit(function( event ) {
+	  func_search();
+	  event.preventDefault();
+	});
+	function open_add(){
+		// load_dose_unit();
+		clear_input();
+		let txt=`<button id="btn_save" onclick="add()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
+		$("#mng").html(txt);
+	}
+	function sh_data(t_dose_unit,du_name){
+		// load_dose_unit();
+		clear_input();
+		let txt=`<button id="btn_del" onclick="del()" type="button" class="btn btn-danger" data-dismiss=""><i class="fas fa-trash-alt fa-1x"></i> ลบ</button>
+		<button id="btn_save" onclick="update()" type="button" class="btn btn-success" data-dismiss=""><i class="fas fa-save fa-1x"></i> บันทึก</button>`;
+		let hiden=`<input type="hidden" name="t_dose_unit" id="t_dose_unit" value="${t_dose_unit}">`;
+		$("#hidden").html(hiden);
+		$("#du_name").val(du_name);
+		$("#modal_dose_unit").modal('toggle');
+		$("#mng").html(txt);
+	}
+	function clear_input(){
+		$("#hidden").html('');
+		$("#du_name").val('');
+
+		$("#frm_dose_unit").removeClass("was-validated");
+	}
+	function add(){
+		$("#msg").html("");
+		let sta=0;
+		if($("#du_name").val()==""){sta++;}
+		if(sta!=0){$("#frm_dose_unit").addClass("was-validated");return false;}
+		else{
+			let f_data=new FormData();
+			let data = $("#frm_dose_unit").serializeArray();
+			$.each(data,(key,val)=>{
+				f_data.append(val.name,val.value);
+			});
+			f_data.append("dose_unit_add",true);
+			event.preventDefault();
+			$.ajax({
+				type: "POST",
+	 			url: link_dose_unit,
+	 			data: f_data,
+				contentType: false,
+				processData: false,
+			}).done((res)=> {
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_dose_unit").modal('toggle');
+					load_dose_unit('',1);
+					clear_input();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}	 				
+	 		});
+		}
+	}	
+	function update(){
+			$("#msg").html("");
+			let f_data=new FormData();
+			let data = $("#frm_dose_unit").serializeArray();
+			$.each(data,(key,val)=>{
+				f_data.append(val.name,val.value);
+			});
+			f_data.append("dose_unit_update",true);
+			event.preventDefault();
+
+				$.ajax({
+					type: "POST",
+		 			url: link_dose_unit,
+		 			data: f_data,
+					contentType: false,
+					processData: false,
+				}).done((res)=> {
+					let data=JSON.parse(res);
+					if(data.status){
+						$("#modal_dose_unit").modal('toggle');
+						load_dose_unit(tmp_filter,tmp_page);
+						clear_input();
+					}else{
+						$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+					}
+				});	
+			
+	}	
+	function del(){
+			$("#msg").html("");
+			$.ajax({
+				type:"POST",
+				url:link_dose_unit,
+				data:{
+					"t_dose_unit":$("#t_dose_unit").val(),
+					"dose_unit_del":true
+				}
+			}).done((res)=>{
+				let data=JSON.parse(res);
+				if(data.status){
+					$("#modal_dose_unit").modal('toggle');
+					load_dose_unit(tmp_filter,tmp_page);
+					clear_input();
+				}else{
+					$("#msg").html("<div style='color:#bd4646'>"+data.msg+"</div>");
+				}
+
+			});
+	}
+	function load_dose_unit(filter,page){
+			let txt;
+			tmp_filter=filter;
+			$("#loading").show();
+			$.ajax({
+				type:"POST",
+				url:link_dose_unit,
+				data:{
+					"load_dose_unit":true,
+					"filter":filter,
+					"page":page
+				}
+			}).done((res)=>{
+				var data=JSON.parse(res);
+				if(!data.msg){
+					$.each(data,(i, item)=>{
+						let css=`style="background-color:#98afc9;color:#fff"`;
+						let row=(page==1?parseInt(i)+1:(parseInt(i)+1)+(page-1)*10);
+						let limit_word="";
+						for(i=0;i<20;i++){
+							if(i>=item.du_name.length){break;}
+							limit_word+=item.du_name[i];
+							if(i==19){limit_word+="...";}
+						}
+							
+						
+						txt+=`<tr ${css}>
+					        <td>${row}</td>
+					        <td>${limit_word} </td>
+					        <td><button style="color:#fff" type="button" onclick="sh_data('${item.t_dose_unit }','${item.du_name}')" class="btn">
+				        		<i  class="fas fa-book-open fa-2x"></i>
+				        	</button>`;
+					});
+				}else{
+					txt=`<tr><td colspan='3'>no data</td></tr>`;
+				}
+				$("#loading").hide();
+				$("#dose_unit_content").html(txt);
+				set_pagination(filter,page);
+			});
+	}
+	function set_pagination(filter,page){
+		let start_page;
+		let end_page;
+
+		$("#pagination").empty();
+		
+
+		$.ajax({
+				type:"POST",
+				url:link_dose_unit,
+				data:{
+					"set_pagination_dose_unit":true,
+					"filter":filter
+				}
+			}).done((res)=>{
+				var data=JSON.parse(res);
+				tmp_page=(page==="pagi_first"?1:(page=="pagi_last"?data:page));
+				if(tmp_page>5){
+					start_page=tmp_page-4;
+					end_page=tmp_page+5;
+				}else{
+					start_page=1;
+					end_page=10;
+				}
+				$("#pagination").append(`<li class="page-item " id="pagi_first"><a class="page-link" onclick="load_dose_unit('${tmp_filter}',1)"><i class="fas fa-fast-backward"></i></a></li>`);
+				for(let i=start_page;i<=data;i++){
+					if(i<=end_page){
+						$("#pagination").append(`<li class="page-item" id="pagi_${i}"><a class="page-link" onclick="load_dose_unit('${tmp_filter}',${i})">${i}</a></li>`);
+						if(i==page){
+							let active_page=`#pagi_${page}`;
+							$(active_page).addClass("active");
+						}
+					}
+				}
+				$("#pagination").append(`<li class="page-item " id="pagi_last"><a class="page-link" onclick="load_dose_unit('${tmp_filter}',${data})"><i class="fas fa-fast-forward"></i></a></li>`);
+			});	
+	}
+	
+</script>
+
