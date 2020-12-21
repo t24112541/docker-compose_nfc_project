@@ -68,6 +68,7 @@ CREATE TABLE `p_staff`  (
   PRIMARY KEY (`s_id`) USING BTREE
 ) ENGINE = MyISAM AUTO_INCREMENT = 18 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci ROW_FORMAT = Dynamic;
 
+INSERT INTO `p_staff` VALUES (17, 'admin', '21232f29a57a5a73894a0ea801fc3', '0000000000');
 -- ----------------------------
 -- Table structure for p_terms_of_use
 -- ----------------------------
